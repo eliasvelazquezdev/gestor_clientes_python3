@@ -1,5 +1,8 @@
+import csv
 import copy
+import config
 import unittest
+import helpers as hp
 import database as db
 
 class TestDatabase(unittest.TestCase):
@@ -35,4 +38,25 @@ class TestDatabase(unittest.TestCase):
         cliente_rebuscado = db.Clientes.buscar('48h')
         self.assertEqual(cliente_borrado.dni, '48h')
         self.assertIsNone(cliente_rebuscado)
+
+    def test_dni_valido(self):
+        self.assertTrue(hp.dni_valido('00A', db.Clientes.lista))
+        self.assertFalse(hp.dni_valido('22812C', db.Clientes.lista))
+        self.assertFalse(hp.dni_valido('F35', db.Clientes.lista))
+        self.assertFalse(hp.dni_valido('48h', db.Clientes.lista))
+
+    def test_escritura_csv(self):
+        db.Clientes.borrar('48h')
+        db.Clientes.borrar('15j')
+        db.Clientes.modificar('28z', 'Mariana', 'Garcia')
+
+        dni, nombre, apellido = None, None, None
+
+        with open(config.DATABASE_PATH, newline="\n") as fichero:
+            reader = csv.reader(fichero, delimiter = ";")
+            dni, nombre, apellido = next(reader)
+
+        self.assertEqual(dni, '28z')
+        self.assertEqual(nombre, 'Mariana')
+        self.assertEqual(apellido, 'Garcia')
         
