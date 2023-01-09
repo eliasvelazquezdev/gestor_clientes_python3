@@ -21,8 +21,6 @@ class Clientes:
             cliente = Cliente(dni,nombre,apellido)
             lista.append(cliente)
 
-
-
     @staticmethod
     def buscar(dni):
         for cliente in Clientes.lista:
